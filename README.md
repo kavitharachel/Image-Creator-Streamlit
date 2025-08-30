@@ -1,93 +1,57 @@
-# Text → Image with Streamlit (Hugging Face Inference)
+# Text → Image (Local) — Streamlit + Diffusers (No external APIs)
 
-A minimal, production-ready Streamlit app that turns text prompts into images using the **Hugging Face Inference API** (no GPU setup required).
-
-https://github.com/your-username/text2img-streamlit
+This app runs *entirely locally* using your CPU/GPU. It **does not** call Hugging Face Inference API or any other hosted service.
+You must provide a **local Stable Diffusion model** directory in Diffusers format.
 
 ---
 
-## ✨ Features
-- Clean Streamlit UI (prompt, negative prompt, steps, guidance, size, batch size)
-- Uses `huggingface_hub.InferenceClient().text_to_image(...)`
-- Works locally and on **Streamlit Community Cloud**
-- Download generated images as PNG
-
-## 🚀 Quickstart (Local)
+## 🚀 Quickstart
 
 1) **Clone** and enter the folder:
 ```bash
-git clone https://github.com/your-username/text2img-streamlit.git
-cd text2img-streamlit
+git clone https://github.com/your-username/text2img-streamlit-local.git
+cd text2img-streamlit-local
 ```
 
-2) **Create a virtual env** (optional but recommended) and install deps:
+2) (Optional) **Create a virtual env** and install dependencies:
 ```bash
 python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-3) **Set your Hugging Face token** (create one at https://huggingface.co/settings/tokens):
-```bash
-export HUGGINGFACEHUB_API_TOKEN=hf_xxx   # Windows (Powershell): $env:HUGGINGFACEHUB_API_TOKEN="hf_xxx"
-```
+3) **Provide a local model** (Diffusers format):
+- Put it anywhere on your disk (e.g., `models/sd-local`), and set that path in the app sidebar.
+- The app is configured with `local_files_only=True` and will not download anything.
 
-Alternatively, create `.streamlit/secrets.toml` and add:
-```toml
-HF_TOKEN="hf_xxx"
-```
+> Tip: If you have a `.safetensors` file, convert it to Diffusers format using the official script from the Diffusers repo, then point the app to that folder.
 
 4) **Run the app:**
 ```bash
 streamlit run app.py
 ```
 
-## ☁️ Deploy to Streamlit Community Cloud
+5) **Use the app:**
+- Enter a prompt
+- Choose resolution, steps, guidance, and batch size
+- Click **Generate** → Download PNG
 
-1) Push this repo to GitHub:
-```bash
-git init
-git remote add origin https://github.com/your-username/text2img-streamlit.git
-git add .
-git commit -m "Initial commit: Streamlit text-to-image"
-git branch -M main
-git push -u origin main
+---
+
+## ⚡ Performance
+- **GPU recommended**. Works with NVIDIA CUDA or Apple Silicon (MPS). CPU will be slow.
+- Use **512×512** and fewer steps for faster results.
+
+## 📁 Structure
 ```
-
-2) Go to https://share.streamlit.io/ → **New app** → pick your repo/branch.
-
-3) In the app **Settings → Secrets**, paste:
-```toml
-HF_TOKEN="hf_xxx"
-```
-
-4) **Deploy**. First build may take ~1–2 minutes. If you hit rate limits, try smaller image sizes or fewer steps.
-
-## 🔧 Configuration
-
-- Change default model in the sidebar — options include:
-  - `stabilityai/stable-diffusion-xl-base-1.0` (default)
-  - `stabilityai/stable-diffusion-2-1`
-  - `runwayml/stable-diffusion-v1-5`
-
-- Tweak defaults inside `app.py` if you like (steps, guidance, etc.).
-
-## 📁 Project Structure
-```
-text2img-streamlit/
+text2img-streamlit-local/
 ├─ app.py
 ├─ requirements.txt
 ├─ README.md
-└─ .streamlit/
-   └─ secrets.toml  # (optional locally; NEVER commit tokens)
+└─ models/              # (empty placeholder — drop your local Diffusers model here if you like)
 ```
 
-> Pro tip: Add `.streamlit/secrets.toml` to `.gitignore` so tokens never get committed.
+## 🔒 Privacy
+Everything stays on your machine. No prompts or images leave your device.
 
-## 🧰 Troubleshooting
-
-- **Missing token** → Ensure `HF_TOKEN` is set in Streamlit secrets **or** `HUGGINGFACEHUB_API_TOKEN` is set as an env var.
-- **Rate limited / 5xx** → Reduce image size, steps, or try again later.
-- **Model not allowed** → Pick a different model that supports the Inference API.
-
-## 🛡️ Safety & Use
-Prompts and images are user‑generated. Please follow your organization’s usage policies and Hugging Face model licenses.
+## 🛡️ Safety
+Safety checker is disabled by default to keep the demo minimal. Add one if your use case requires it.
